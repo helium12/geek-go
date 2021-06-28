@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package product.api.v1;
+
+option go_package = "github.com/helium12/geek-go/week04/examples/product/api/v1;v1";
+option java_multiple_files = true;
+option java_package = "product.api.v1";
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+service ProductService {
+    rpc CreateProduct (CreateProductRequest) returns (CreateProductReply) {
+        option (google.api.http) = {
+            post: "/v1/product/"
+            body: "*"
+        };
+    }
+    rpc UpdateProduct (UpdateProductRequest) returns (UpdateProductReply) {
+        option (google.api.http) = {
+            put: "/v1/product/{id}"
+            body: "*"
+        };
+    }
+    rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductReply) {
+        option (google.api.http) = {
+            delete: "/v1/product/{id}"
+        };
+    }
+    rpc GetProduct (GetProductRequest) returns (GetProductReply) {
+        option (google.api.http) = {
+            get: "/v1/product/{id}"
+        };
+    }
+    rpc ListProduct (ListProductRequest) returns (ListProductReply) {
+        option (google.api.http) = {
+            get: "/v1/product/"
+        };
+    }
+}
+
+message Product {
+    int64 id = 1;
+    string name = 2;
+    string desc = 3;
+    int64 sold = 4;
+}
+
+message CreateProductRequest {
+    string name = 1 [(validate.rules).string = {min_len: 5, max_len: 200}]; // the name of string must be between 5 and 200 character
+    string desc = 2;
+}
+
+message CreateProductReply {
+    Product Product = 1;
+}
+
+message UpdateProductRequest {
+    int64 id = 1 [(validate.rules).int64 = {gt: 0}];
+    string name = 2 [(validate.rules).string = {min_len: 5, max_len: 200}]; // the name of string must be between 5 and 200 character;
+    string desc = 3;
+}
+
+message UpdateProductReply {
+    Product Product = 1;
+}
+
+message DeleteProductRequest {
+    int64 id = 1;
+}
+message DeleteProductReply {
+}
+
+message GetProductRequest {
+    int64 id = 1;
+}
+
+message GetProductReply {
+    Product Product = 1;
+}
+
+message ListProductRequest {
+}
+
+message ListProductReply {
+    repeated Product results = 1;
+}
